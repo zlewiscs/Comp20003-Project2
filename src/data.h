@@ -4,7 +4,9 @@
 /* include essential header files */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "list.h"
+#include "dynamicArray.h"
 
 /* Define Constants */
 #define MAX_STRLEN 128
@@ -37,11 +39,12 @@ struct cafe
 /* Define Function Prototypes */
 // Process each line of csv file.
 void processCsvLine(cafe_t *cafe, char *lineBuffer);
+
 // Helper function to assign attributes to cafe.
 void assignAttribute(cafe_t *cafe, char *token, int attributeNum);
 
 // Read csv data into list.
-void readCsv(FILE *inFile, list_t *cafes);
+void readCsv(FILE *inFile, list_t *cafes, dynamicArray_t *tradingNames);
 
 // Print cafe data to file.
 void printCafe(FILE *outFile, cafe_t *cafe);
@@ -51,5 +54,14 @@ void freeCafe(void *data);
 
 // Compare the trading name of two cafes
 int compareTradingName(void *data, char key[]);
+
+// Compare partial trading name with trading name of cafe
+int comparePartialTradingName(char *target, char *key, int *charCmpCount);
+
+// Custom strcmp function that counts the number of character comparisons
+int strncmpWithCount(char *target, char *key, size_t n, int *charCount);
+
+// Strcmp wrapper for qsort
+int strcmpWrapper(const void *key1, const void *key2);
 
 #endif /* DATA_H */

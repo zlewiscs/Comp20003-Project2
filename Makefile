@@ -5,12 +5,12 @@ CFLAGS = -Wall -g
 LDLIBS = -lm
 
 # Define sets of source files and object files
-SRC = src/data.c src/list.c src/main.c 
+SRC = src/data.c src/list.c src/dynamicArray.c src/bitWiseOp.c src/main.c
 # OBJ is the same as SRC, just replace .c with .o and prepend 'src/'
 OBJ = $(patsubst src/%.c,src/%.o,$(SRC))
 
 # Define the executable name(s)
-EXE = dict1
+EXE = dict2
 
 # The first target:
 $(EXE): $(OBJ) 

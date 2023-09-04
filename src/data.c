@@ -29,24 +29,30 @@ assignAttribute(cafe_t *cafe, char *token, int attributeNum)
             return;
         case 4:
             cafe->buildingAddress = strdup(token);
+            assert(cafe->buildingAddress);
             return;
         case 5:
             cafe->clueSmallArea = strdup(token);
+            assert(cafe->clueSmallArea);
             return;
         case 6:
             cafe->businessAddress = strdup(token);
+            assert(cafe->businessAddress);
             return;
         case 7:
             cafe->tradingName = strdup(token);
+            assert(cafe->tradingName);
             return;
         case 8:
             cafe->industryCode = atoi(token);
             return;
         case 9:
             cafe->industryDescription = strdup(token);
+            assert(cafe->industryDescription);
             return;
         case 10:
             cafe->seatingType = strdup(token);
+            assert(cafe->seatingType);
             return;
         case 11:
             cafe->seatCount = atoi(token);
@@ -92,7 +98,7 @@ processCsvLine(cafe_t *cafe, char *lineBuffer)
 }
 
 // Read csv file into list of cafe
-void readCsv(FILE *inFile, list_t *cafes)
+void readCsv(FILE *inFile, list_t *cafes, dynamicArray_t *tradingNames)
 {
     // Create a buffer to store each line of the csv file
     char *lineBuffer = NULL;
@@ -113,6 +119,8 @@ void readCsv(FILE *inFile, list_t *cafes)
 
         // Add the cafe to the list
         listAppend(cafes, cafe);
+        // Add the trading name to the dynamic array
+        insertData(tradingNames, cafe->tradingName);
     }
 
     free(lineBuffer); // Free the lineBuffer
@@ -150,9 +158,48 @@ void freeCafe(void *data)
     free(cafe);
 }
 
-// Compare the trading name of two cafes
+// Compare the trading name of two cafes for list
 int compareTradingName(void *data, char key[])
 {
     cafe_t *cafe1 = data;
     return strcmp(cafe1->tradingName, key);
+}
+
+// Compare two strings and store the number of char comparison made
+int strncmpWithCount(char *target, char *key, size_t n, int *charCmpCount) 
+{   
+    // Same output as strncmp while updating charCmpCount variable
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    // Here Assume len(key) <= len(target)
+    for (int i = 0; i < n; i++) 
+    {
+        if (target[i] != key[i])
+        {
+            *charCmpCount += 1;
+            return target[i] - key[i];
+        }
+        else
+        {
+            *charCmpCount += 1;
+        }
+    }
+
+    return 0;
+}
+
+// Compare partial trading name with trading name of cafe
+int comparePartialTradingName(char*target, char *key, int *charCmpCount)
+{
+    int keyLen = strlen(key);
+    return strncmpWithCount(target, key, keyLen, charCmpCount);
+}
+
+// Strcmp wrapper for qsort
+int strcmpWrapper(const void *a, const void *b)
+{
+    return strcmp(*(const char **)a, *(const char **)b);
 }

@@ -8,11 +8,15 @@
 #include <string.h>
 #include <assert.h>
 
+/* >>>>>>>>>>>>>>>>>>>> Define constants*/
+#define CHAR_BIT 8
+
 /* >>>>>>>>>>>>>>>>>>>> Function Prototypes*/
 // get the number of bits of a given character
-int getBits(char key, int n);
-unsigned int splitStem(const char *key, int start, int end);
+char getBits(const char key, int n);
 
+// Extract (end - start) number of bits from the key
+char* splitStem(const char key, int start, int end);
 
 /* End of header file */
 #endif

@@ -48,9 +48,4 @@ void listAppend(list_t *list, void *data);
 // Here we assume that key is an int (a limited assumption for sake of simplicity!)
 int listSearch(list_t *list, char key[], void *data[], int (*comparator)(void *, char *));
 
-/* TODO:
-    - Print list item
-    - Print list
-*/
-
 #endif
