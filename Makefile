@@ -10,11 +10,18 @@ SRC = src/data.c src/list.c src/dynamicArray.c src/bitWiseOp.c src/main.c
 OBJ = $(patsubst src/%.c,src/%.o,$(SRC))
 
 # Define the executable name(s)
-EXE = dict2
+EXE1 = dict2
+EXE2 = dict3
+
+all: $(EXE1) $(EXE2)
 
 # The first target:
-$(EXE): $(OBJ) 
-	$(CC) $(CFLAGS) -o $(EXE) $(OBJ) $(LDLIBS)
+$(EXE1): $(OBJ) 
+	$(CC) $(CFLAGS) -o $(EXE1) $(OBJ) $(LDLIBS)
+
+# The second target:
+$(EXE2): $(OBJ) 
+	$(CC) $(CFLAGS) -o $(EXE2) $(OBJ) $(LDLIBS)
 
 # Rule to build .o files from corresponding .c files
 src/%.o: src/%.c src/%.h

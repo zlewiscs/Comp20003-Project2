@@ -174,9 +174,13 @@ int strncmpWithCount(char *target, char *key, size_t n, int *charCmpCount)
         return 0;
     }
 
-    // Here Assume len(key) <= len(target)
-    for (int i = 0; i < n; i++) 
+    for (int i = 0; i < n; i++)
     {
+        if (target[i] == '\0')
+        {
+            return -1;
+        }
+
         if (target[i] != key[i])
         {
             *charCmpCount += 1;
@@ -187,7 +191,7 @@ int strncmpWithCount(char *target, char *key, size_t n, int *charCmpCount)
             *charCmpCount += 1;
         }
     }
-
+    
     return 0;
 }
 

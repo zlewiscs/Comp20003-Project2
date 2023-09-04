@@ -64,6 +64,11 @@ int main(int argc, char **argv)
 		qsort(tradingNames->array, tradingNames->elementCount, 
 				sizeof(char *), strcmpWrapper);
 		
+		// To store keys already searched for
+		dynamicArray_t *keys = createDynamicArray();
+		// To store trading names already searched for
+		dynamicArray_t *tradingNamesSearched = createDynamicArray();
+		
 		/*
 		**First binary search for first match and then
 		**linear search around the first match 
@@ -71,6 +76,15 @@ int main(int argc, char **argv)
 		*/ 
 		while (getline(&key, &len, stdin) != -1)
 		{
+			// Check if the key has already been searched for
+			if (isSearched(key, keys) == 1)
+			{
+				continue;
+			}
+
+			// Insert the key into the keys dynamic array
+			insertData(keys, key);
+
 			// For each new line reset the comparison counts
 			// Variable to store the number of comparison made
 			int strCmpCount = 0;
@@ -91,15 +105,35 @@ int main(int argc, char **argv)
 			if (firstMatch != -1) 
 			{
 				for (int i = leftMatches; i <= rightMatches; i++) 
-				{
+				{	
+					if (isSearched(tradingNames->array[i], tradingNamesSearched) == 1)
+					{
+						continue;
+					}
+
+					// Insert the trading name into the tradingNamesSearched dynamic array
+					insertData(tradingNamesSearched, tradingNames->array[i]);
+
 					int bitCount = charCmpCount * 8;
-					fprintf(outFile, "%s --> b%d, c%d, s%d\n", 
+					
+					printf("%s --> b%d, c%d, s%d\n", 
 					tradingNames->array[i], bitCount, charCmpCount, strCmpCount);
+
+					// Search for cafes with matching trading name in the list
+					void *matches[cafes->elementCount];
+					int matchCount = listSearch(cafes, tradingNames->array[i], matches, compareTradingName);
+					for (int j = 0; j < matchCount; j++)
+					{
+						cafe_t *cafe = matches[j];
+						fprintf(outFile, "%s\n", key);
+						printCafe(outFile, cafe);
+					}
 				}
-				
 			}
 		}
 
+		freeDynamicArray(keys);
+		freeDynamicArray(tradingNamesSearched);
 	}
 
 	// free key

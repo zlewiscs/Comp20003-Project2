@@ -41,4 +41,7 @@ int findAndTraverse(dynamicArray_t *dArray, char *key,
         int (*compare)(char *, char *, int *), int *leftMatches, int *rightMatches, 
         int *strCmpCount, int *charCmpCount);
 
+// Determine if a key has already been searched for
+int isSearched(char *key, dynamicArray_t *dArray);
+
 #endif

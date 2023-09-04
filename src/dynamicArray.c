@@ -78,7 +78,7 @@ int binarySearch(dynamicArray_t *dArray, char* key, int (*compare)(char *, char 
     {
         mid = (low + high) / 2;
         int cmpResult = compare(dArray->array[mid], key, charCmpCount);
-        *strCmpCount+= 1;
+        *strCmpCount += 1;
         if (cmpResult == 0) 
         {
             return mid;
@@ -148,4 +148,17 @@ int findAndTraverse(dynamicArray_t *dArray, char *key,
     }
 
     return firstMatch;   
+}
+
+// Determine if a key has already been searched for
+int isSearched(char *key, dynamicArray_t *keys) 
+{
+    for (int i = 0; i < keys->elementCount; i++) 
+    {
+        if (strcmp(keys->array[i], key) == 0) 
+        {
+            return 1;
+        }
+    }
+    return 0;
 }
