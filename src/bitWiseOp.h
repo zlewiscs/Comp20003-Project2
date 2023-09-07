@@ -13,10 +13,10 @@
 
 /* >>>>>>>>>>>>>>>>>>>> Function Prototypes*/
 // get the number of bits of a given character
-char getBits(const char key, int n);
+int getBits(const char *key, int n);
 
 // Extract (end - start) number of bits from the key
-char splitStem(const char key, int start, int end);
+char* splitStem(char key, int start, int end);
 
 /* End of header file */
 #endif

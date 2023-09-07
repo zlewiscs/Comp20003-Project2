@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include "data.h"
+ 
 
 /* DATA type implementation */
 
@@ -141,8 +142,8 @@ void printCafe(FILE *outFile, cafe_t *cafe)
     fprintf(outFile, "industry_description: %s || ", cafe->industryDescription);
     fprintf(outFile, "seating_type: %s || ", cafe->seatingType);
     fprintf(outFile, "number_of_seats: %d || ", cafe->seatCount);
-    fprintf(outFile, "longitude: %lf || ", cafe->longitude);
-    fprintf(outFile, "latitude: %lf || \n", cafe->latitude);
+    fprintf(outFile, "longitude: %.5lf || ", cafe->longitude);
+    fprintf(outFile, "latitude: %.5lf || \n", cafe->latitude);
 }
 
 // Free the memory allocated to individual cafe
@@ -162,23 +163,20 @@ void freeCafe(void *data)
 int compareTradingName(void *data, char key[])
 {
     cafe_t *cafe1 = data;
-    return strcmp(cafe1->tradingName, key);
+    return strncmp(cafe1->tradingName, key, strlen(key));
 }
 
 // Compare two strings and store the number of char comparison made
 int strncmpWithCount(char *target, char *key, size_t n, int *charCmpCount) 
 {   
-    // Same output as strncmp while updating charCmpCount variable
-    if (n == 0)
-    {
-        return 0;
-    }
 
     for (int i = 0; i < n; i++)
     {
-        if (target[i] == '\0')
+        // If reached null bytes means all characters before it are the same
+        if (key[i] == '\0')
         {
-            return -1;
+            *charCmpCount += 1;
+            return 0;
         }
 
         if (target[i] != key[i])
@@ -195,10 +193,10 @@ int strncmpWithCount(char *target, char *key, size_t n, int *charCmpCount)
     return 0;
 }
 
-// Compare partial trading name with trading name of cafe
+// Compare partial trading name prefixes with trading name of cafe
 int comparePartialTradingName(char*target, char *key, int *charCmpCount)
 {
-    int keyLen = strlen(key);
+    int keyLen = strlen(key) + 1;
     return strncmpWithCount(target, key, keyLen, charCmpCount);
 }
 
@@ -206,4 +204,24 @@ int comparePartialTradingName(char*target, char *key, int *charCmpCount)
 int strcmpWrapper(const void *a, const void *b)
 {
     return strcmp(*(const char **)a, *(const char **)b);
+}
+
+// Sort cafe by tradingName
+void sortCafes(void* array, int dataCount)
+{
+    int i, j;
+    cafe_t **cafes = array;
+    cafe_t *key;
+
+    for (i = 1; i < dataCount; i++) {
+        key = cafes[i];
+        j = i - 1;
+
+        // Compare tradingName strings to determine the correct position
+        while (j >= 0 && strcmp(cafes[j]->tradingName, key->tradingName) > 0) {
+            cafes[j + 1] = cafes[j];
+            j = j - 1;
+        }
+        cafes[j + 1] = key;
+    }
 }

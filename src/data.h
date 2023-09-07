@@ -64,4 +64,7 @@ int strncmpWithCount(char *target, char *key, size_t n, int *charCount);
 // Strcmp wrapper for qsort
 int strcmpWrapper(const void *key1, const void *key2);
 
+// Small range hence insertion sort will be better
+void sortCafes(void* array, int dataCount);
+
 #endif /* DATA_H */

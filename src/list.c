@@ -66,6 +66,7 @@ void listAppend(list_t *list, void *data)
     list->tail = new; // "new" is the new tail node
     (list->elementCount)++;
 }
+
 int listSearch(list_t *list, char key[], void *data[], int (*comparator)(void *, char *))
 {
     assert(list);
@@ -83,3 +84,4 @@ int listSearch(list_t *list, char key[], void *data[], int (*comparator)(void *,
     }
     return matches; // Return the number of matches
 }
+

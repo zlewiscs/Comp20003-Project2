@@ -12,13 +12,13 @@
 #define NOT_FOUND -1
 #define INITIAL_SIZE 2
 /* Define data types */
-// Struct for dynamic char array
-typedef struct dynamicArray 
+typedef struct dynamicArray dynamicArray_t;
+struct dynamicArray 
 {
     char **array;
     size_t size;
     size_t elementCount;
-} dynamicArray_t;
+};
 
 /* Dynamic array specific functions */
 // Create a new dynamic char array

@@ -28,7 +28,6 @@ int main(int argc, char **argv)
 
 	// read in the csv file
 	readCsv(inFile, cafes, tradingNames);
-	shrinkArray(tradingNames);
 
 	// The following is stage 1
 	if (stage == 1) {
@@ -66,8 +65,8 @@ int main(int argc, char **argv)
 		
 		// To store keys already searched for
 		dynamicArray_t *keys = createDynamicArray();
-		// To store trading names already searched for
-		dynamicArray_t *tradingNamesSearched = createDynamicArray();
+		// To store printedKeys to prevent further printing
+		dynamicArray_t *printedKeys = createDynamicArray();
 		
 		/*
 		**First binary search for first match and then
@@ -76,12 +75,6 @@ int main(int argc, char **argv)
 		*/ 
 		while (getline(&key, &len, stdin) != -1)
 		{
-			// Check if the key has already been searched for
-			if (isSearched(key, keys) == 1)
-			{
-				continue;
-			}
-
 			// Insert the key into the keys dynamic array
 			insertData(keys, key);
 
@@ -106,17 +99,14 @@ int main(int argc, char **argv)
 			{
 				for (int i = leftMatches; i <= rightMatches; i++) 
 				{	
-					if (isSearched(tradingNames->array[i], tradingNamesSearched) == 1)
+					if (i > 0 && strncmp(tradingNames->array[i], tradingNames->array[i - 1], strlen(key)) == 0)
 					{
 						continue;
 					}
 
-					// Insert the trading name into the tradingNamesSearched dynamic array
-					insertData(tradingNamesSearched, tradingNames->array[i]);
-
 					int bitCount = charCmpCount * 8;
 					
-					printf("%s --> b%d, c%d, s%d\n", 
+					printf("%s --> b%d c%d s%d\n", 
 					tradingNames->array[i], bitCount, charCmpCount, strCmpCount);
 
 					// Search for cafes with matching trading name in the list
@@ -125,16 +115,27 @@ int main(int argc, char **argv)
 					for (int j = 0; j < matchCount; j++)
 					{
 						cafe_t *cafe = matches[j];
-						fprintf(outFile, "%s\n", key);
+						if (isSearched(key, printedKeys) == 0)
+						{
+							fprintf(outFile, "%s\n", key);
+							insertData(printedKeys, key);
+						}
 						printCafe(outFile, cafe);
+
 					}
 				}
 			}
 		}
+		// Free printedKeys
+		freeDynamicArray(printedKeys);
 
 		freeDynamicArray(keys);
-		freeDynamicArray(tradingNamesSearched);
 	}
+	else if (stage == 3)
+	{
+		// Create a radix tree
+	}
+	
 
 	// free key
 	free(key);
@@ -151,4 +152,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-

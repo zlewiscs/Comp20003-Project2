@@ -6,68 +6,95 @@
 #define CHAR_BIT 8
 
 // Get the bit value of a characture at position n
-char getBits(const char key, int n) 
-{
-    // assert(n >= 0 && n <= 7);
-    assert(n <= 7);
+int getBits(const char *key, int n) {
+    /* Get the position of the character in the string
+     * 0 meaning the first character , 2 meaning the second
+     * by floor division by size of a single char in bits 
+    */ 
+    int position = n / CHAR_BIT;
 
-    /* 
-    Right shift the desired bit to the least significant
-    position (aka right most) and then perform a bitwise AND with 1
-    */
-    return ((key >> (n - 1)) & 1) + '0';
+    // Get the bit position of the character in the string
+    int bitPosition = n % CHAR_BIT;
+
+    return (key[position] >> (CHAR_BIT- bitPosition - 1)) & 0b1;
 }
 
-// Extract (end - start) number of bits from the key
-char splitStem(const char key, int start, int end) 
+// Extract (end - start) number of bits from the stem (a string)
+char* splitStem(char* stem, int start, int end) 
 {
-    // Ensure start and end are reasonable
-    assert(start >= 0 && start < CHAR_BIT);
-    assert(end >= 0 && end < CHAR_BIT);
-    assert(start <= end);
+    printf("strlen of stem: %ld\n", strlen(stem));
+    printf("# of bits stored by stem: %ld\n", strlen(stem) * CHAR_BIT);
+    // Get the length of the stem to be extracted
+    int length = (end - start) + (start % CHAR_BIT) + 1; // Bits
+    printf("start at: %d\n", start);
+    printf("end at: %d\n", end);
+    printf("Length: %d\n", length);
+    int stringLength = length / CHAR_BIT + 1; // Characters
+    printf("String length: %d\n", stringLength);
 
-    // Calculate the length of the field to be extracted
-    int length = end - start;
-    // Initiate the result
-    char result = key;
+    // Allocate memory for the extracted stem
+    char* extractedStem = (char*) malloc(sizeof(char) * (stringLength + 1));
+    assert(extractedStem);
 
-    // Left shift key by length to get the desired bits to the most significant position
-    result = (result << length) - 1;
+    // Locate the character storing the first bit to be extracted
+    int startChar = start / CHAR_BIT; // 0 -> 0, 1 -> 0, 7 -> 0, 8 -> 1, 9 -> 1, 15 -> 1, 16 -> 2, 17 -> 2 ...
+    int startBit = start % CHAR_BIT; // 0 -> 0, 1 -> 1, 7 -> 7, 8 -> 0, 9 -> 1, 15 -> 7, 16 -> 0, 17 -> 1 ...
+    // Mask the starting character and append it to 0th position of character string
+    extractedStem[0] = stem[startChar] & ((0b1 << (CHAR_BIT - startBit)) - 1);
 
-    return (key & result);
+    // Fill in the rest of the characters to extractedStem until the end
+    for (int i = 1; i < stringLength; i++) 
+    {
+        extractedStem[i] = stem[startChar + i];
+    }
+    char mask = (0b11111111 - ((0b1 << ((stringLength * CHAR_BIT - end) % CHAR_BIT)) - 1));
+    printf("Mask for last char:\n");
+    for(int i = 0; i < 8; i++) {printf("%d", getBits(&mask, i));}
+    printf("\n");
+    // Left shift 1 to the end'th binary bit then subtract 1 to mask the last char
+    extractedStem[stringLength - 1] &= mask;
+    printf("Last character in binary for extracted stem:\n");
+    for (int i = 0; i < CHAR_BIT; i++) {printf("%d", getBits(&extractedStem[stringLength - 1], i));}
+    printf("\n");
+
+    // Append null terminator
+    extractedStem[stringLength] = '\0';
+
+    return extractedStem;
+
 }
 
 int main(int argc, char **argv) 
 {
-    // See the logic
-    char A = 0b01000001;
-    printf("A in binary: ");
-    for(int i = 0; i < 8; i++) {printf("%c", getBits(A, i));}
+    // Test getbits
+    char *key = "Domino's Pizza\0";
+    char *secondKey = "Arbory Bar and Eatery\0";
+    for (int i = 0; i < strlen(key) * CHAR_BIT; i++) 
+    {
+        if(i % 8 == 0 && i > 0) {printf(" ");}
+            
+        printf("%d", getBits(key, i));
+    }
+    printf("\n");
+    for (int i = 0; i < strlen(secondKey) * CHAR_BIT; i++) 
+    {
+        if(i % 8 == 0 && i > 0) {printf(" ");}
+            
+        printf("%d", getBits(secondKey, i));
+    }
     printf("\n");
 
-    char A1 = (A << 1);
-    printf("A in binary after left shift by 3: ");
-    for(int i = 0; i < 8; i++) {printf("%c", getBits(A1, i));}
+    // Test splitStem
+    char *test = splitStem(key, 12, ((strlen(key)) * CHAR_BIT) - 32);
+    printf("Should end at: %ld\n", ((strlen(key)) * CHAR_BIT) - 32);
+    printf("Extracted stem:\n");
+    for (int i = 0; i < (strlen(test) + 1) * CHAR_BIT; i++) 
+    {
+        if(i % 8 == 0 && i > 0) {printf(" ");}
+        printf("%d", getBits(test, i));
+    }
     printf("\n");
 
-    char mask = A1 - 1;
-    printf("mask for 1 bit in binary: ");
-    for(int i = 0; i < 8; i++) {printf("%c", getBits(mask, i));}
-    printf("\n");
-
-    char A2 = A & mask;
-    printf("A in binary after masking: ");
-    for(int i = 0; i < 8; i++) {printf("%c", getBits(A2, i));}
-    printf("\n");
-
-    // Test splitStem function
-    char A3 = splitStem(A, 0, 1);
-    printf("A in binary after splitStem: ");
-    for(int i = 0; i < 8; i++) {printf("%c", getBits(A3, i));}
-    printf("\n");
-
-    printf("Char A after splitStem: %c\n", A3);
-    
     return 0;
 }
 
