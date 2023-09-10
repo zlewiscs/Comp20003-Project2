@@ -7,6 +7,7 @@
 #include <string.h>
 #include "list.h"
 #include "dynamicArray.h"
+#include "radixTree.h"
 
 /* Define Constants */
 #define MAX_STRLEN 128
@@ -44,7 +45,7 @@ void processCsvLine(cafe_t *cafe, char *lineBuffer);
 void assignAttribute(cafe_t *cafe, char *token, int attributeNum);
 
 // Read csv data into list.
-void readCsv(FILE *inFile, list_t *cafes, dynamicArray_t *tradingNames);
+void readCsv(FILE *inFile, list_t *cafes, dynamicArray_t *tradingNames, rTree_t *radixTree);
 
 // Print cafe data to file.
 void printCafe(FILE *outFile, cafe_t *cafe);
@@ -66,5 +67,7 @@ int strcmpWrapper(const void *key1, const void *key2);
 
 // Small range hence insertion sort will be better
 void sortCafes(void* array, int dataCount);
+
+//
 
 #endif /* DATA_H */

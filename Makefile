@@ -5,7 +5,7 @@ CFLAGS = -Wall -g
 LDLIBS = -lm
 
 # Define sets of source files and object files
-SRC = src/data.c src/list.c src/dynamicArray.c src/main.c
+SRC = src/data.c src/list.c src/dynamicArray.c src/radixTree.c src/bitWiseOp.c src/main.c
 # OBJ is the same as SRC, just replace .c with .o and prepend 'src/'
 OBJ = $(patsubst src/%.c,src/%.o,$(SRC))
 

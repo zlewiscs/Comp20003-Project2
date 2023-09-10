@@ -16,7 +16,7 @@
 int getBits(const char *key, int n);
 
 // Extract (end - start) number of bits from the key
-char* splitStem(char key, int start, int end);
+char* splitStem(char *stem, int start, int end);
 
 /* End of header file */
 #endif

@@ -4,6 +4,9 @@
 #include <ctype.h>
 #include <assert.h>
 #include "data.h"
+#include "list.h"
+#include "dynamicArray.h"
+#include "radixTree.h"
  
 
 /* DATA type implementation */
@@ -99,7 +102,7 @@ processCsvLine(cafe_t *cafe, char *lineBuffer)
 }
 
 // Read csv file into list of cafe
-void readCsv(FILE *inFile, list_t *cafes, dynamicArray_t *tradingNames)
+void readCsv(FILE *inFile, list_t *cafes, dynamicArray_t *tradingNames, rTree_t *radixTree)
 {
     // Create a buffer to store each line of the csv file
     char *lineBuffer = NULL;
@@ -122,6 +125,8 @@ void readCsv(FILE *inFile, list_t *cafes, dynamicArray_t *tradingNames)
         listAppend(cafes, cafe);
         // Add the trading name to the dynamic array
         insertData(tradingNames, cafe->tradingName);
+        // Add the data to the radix tree
+        radixTree = insertNode(radixTree, cafe);
     }
 
     free(lineBuffer); // Free the lineBuffer

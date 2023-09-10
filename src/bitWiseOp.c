@@ -21,35 +21,26 @@ char* splitStem(char* stem, int start, int end)
 {
 
     // Get the length of the stem to be extracted
-    int length = (end - start) + (start % CHAR_BIT) + 1; // Bits
+    int length = end - start; // Bits
+    if (length <= 0)
+    {
+        return NULL;
+    }
     int stringLength = length / CHAR_BIT + 1; // Characters
 
     // Allocate memory for the extracted stem
-    char* extractedStem = (char*) malloc(sizeof(char) * (stringLength + 1));
+    char* extractedStem = (char*) calloc(sizeof(char) * (stringLength + 1), sizeof(char));
     assert(extractedStem);
 
-    // Locate the character storing the first bit to be extracted
-    int startChar = start / CHAR_BIT; // 0 -> 0, 1 -> 0, 7 -> 0, 8 -> 1, 9 -> 1, 15 -> 1, 16 -> 2, 17 -> 2 ...
-    int startBit = start % CHAR_BIT; // 0 -> 0, 1 -> 1, 7 -> 7, 8 -> 0, 9 -> 1, 15 -> 7, 16 -> 0, 17 -> 1 ...
-    // Mask the starting character and append it to 0th position of character string
-    extractedStem[0] = stem[startChar] & ((0b1 << (CHAR_BIT - startBit)) - 1);
+    int currBit = 0;
 
-    // Fill in the rest of the characters to extractedStem until the end
-    for (int i = 1; i < stringLength; i++) 
+    for (int i = start; i < length; i++)
     {
-        extractedStem[i] = stem[startChar + i];
+        int bit = getBits(stem, i);
+        // Current bit mod char bit is to ensure leftshift num is always between 0 and 8 exclusive
+        extractedStem[currBit / CHAR_BIT] |= (bit << (CHAR_BIT - 1 - (currBit % CHAR_BIT)));
+        currBit++;
     }
-
-    // Generate a mask for the last non null terminating character
-    char mask = (0b11111111 - ((0b1 << ((stringLength * CHAR_BIT - end) % CHAR_BIT)) - 1));
-
-    for(int i = 0; i < 8; i++) {printf("%d", getBits(&mask, i));}
-
-    // Left shift 1 to the end'th binary bit then subtract 1 to mask the last char
-    extractedStem[stringLength - 1] &= mask;
-
-    // Append null terminator
-    extractedStem[stringLength] = '\0';
 
     return extractedStem;
 

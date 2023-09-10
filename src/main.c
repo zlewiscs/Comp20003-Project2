@@ -26,8 +26,11 @@ int main(int argc, char **argv)
 	// Create a dynamic array of trading names
 	dynamicArray_t *tradingNames = createDynamicArray();
 
+	// Initialise the radix tree
+	rTree_t *radixTree = NULL;
+
 	// read in the csv file
-	readCsv(inFile, cafes, tradingNames);
+	readCsv(inFile, cafes, tradingNames, NULL);
 
 	// The following is stage 1
 	if (stage == 1) {
@@ -112,6 +115,7 @@ int main(int argc, char **argv)
 					// Search for cafes with matching trading name in the list
 					void *matches[cafes->elementCount];
 					int matchCount = listSearch(cafes, tradingNames->array[i], matches, compareTradingName);
+					sortCafes(matches, matchCount);
 					for (int j = 0; j < matchCount; j++)
 					{
 						cafe_t *cafe = matches[j];
@@ -133,8 +137,22 @@ int main(int argc, char **argv)
 	}
 	else if (stage == 3)
 	{
-		// Create a radix tree
+		// // Read input from stdin
+		// while (getline(&key, &len, stdin) != -1)
+		// {
+		// 	// remove the newline character
+		// 	key[strlen(key) - 1] = '\0';
+
+		// 	// Variable to store the number of comparison made
+		// 	int strCmpCount = 0;
+		// 	int charCmpCount = 0;
+
+			
+		// 	// search the key through radix tree
+		// 	searchNode(radixTree, key, &strCmpCount, &charCmpCount, outFile);
+		// }
 	}
+	
 	
 
 	// free key
@@ -145,6 +163,9 @@ int main(int argc, char **argv)
 
 	// free dynamic array
 	freeDynamicArray(tradingNames);
+
+	// free radix tree
+	freeTree(radixTree);
 
 	// close files
 	fclose(inFile);
